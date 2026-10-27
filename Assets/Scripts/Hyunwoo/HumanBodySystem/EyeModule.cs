@@ -11,7 +11,7 @@ namespace Hyunwoo.HumanBodySystem
         {
             
         }
-
+        
         protected override void Work()
         {
             // 게이지가 작으면 return

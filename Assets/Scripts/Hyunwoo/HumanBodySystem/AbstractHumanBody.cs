@@ -1,3 +1,4 @@
+using System.Reflection;
 using UnityEngine;
 
 namespace Hyunwoo.HumanBodySystem
@@ -22,6 +23,11 @@ namespace Hyunwoo.HumanBodySystem
             Work();
         }
 
+        public virtual void ConnectionBlood(HeartModule heartModule)
+        {
+            Debug.Log($"연결되었습니다 {gameObject}");
+        }
+        
         protected abstract void Work();
 
         private void FillGauge() // 나중에 async로 바꿔보기
