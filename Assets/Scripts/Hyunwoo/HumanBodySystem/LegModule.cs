@@ -3,20 +3,11 @@ using UnityEngine;
 
 namespace Hyunwoo.HumanBodySystem
 {
-    public class LegModule : AbstractHumanBody, IModule
+    public class LegModule : AbstractViscera
     {
-        [SerializeField] private float wantGauge;
-        
-        protected override void Work()
+        protected override void WorkFunction(int index)
         {
-            // 게이지가 작으면 return
-            if (Gauge <= wantGauge) return;
             
-            // 코드부 구현
-        }
-
-        public void Initialize(ModuleOwner owner)
-        {
         }
     }
 }

@@ -10,5 +10,10 @@ namespace Hyunwoo.CoreLib.ModuleSystem
         {
             Owner = owner;
         }
+
+        public void Work()
+        {
+            
+        }
     }
 }
