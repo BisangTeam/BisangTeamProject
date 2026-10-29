@@ -3,21 +3,11 @@ using UnityEngine;
 
 namespace Hyunwoo.HumanBodySystem
 {
-    public class EyeModule : AbstractHumanBody, IModule
+    public class EyeModule : AbstractViscera
     {
-        [SerializeField] private float wantGauge;
-        
-        public void Initialize(ModuleOwner owner)
+        protected override void WorkFunction(int index)
         {
-            
-        }
-        
-        protected override void Work()
-        {
-            // 게이지가 작으면 return
-            if (Gauge <= wantGauge) return;
-            
-            // 코드부 구현
+            Debug.Log("Eye : " + index);
         }
     }
 }

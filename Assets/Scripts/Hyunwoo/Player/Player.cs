@@ -26,6 +26,14 @@ namespace Hyunwoo.Player
             playerInput.OnLeftKeyPressed += OnHandleLeft;
         }
 
+        private void Update()
+        {
+            foreach (var moduleDictValue in _moduleDict.Values)
+            {
+                moduleDictValue.Work();
+            }
+        }
+
         private void OnHandleLeft()
         {
             //(EyeModule)_eyeModule.

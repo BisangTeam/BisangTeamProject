@@ -1,22 +1,14 @@
+using Hyunwoo.CoreLib;
 using Hyunwoo.CoreLib.ModuleSystem;
 using UnityEngine;
 
 namespace Hyunwoo.HumanBodySystem
 {
-    public class EarModule : AbstractHumanBody, IModule
+    public class EarModule : AbstractViscera
     {
-        [SerializeField] private float wantGauge;
-        
-        protected override void Work()
+        protected override void WorkFunction(int index)
         {
-            // 게이지가 작으면 return
-            if (Gauge <= wantGauge) return;
             
-            // 코드부 구현
-        }
-
-        public void Initialize(ModuleOwner owner)
-        {
         }
     }
 }
