@@ -276,7 +276,7 @@ MonoBehaviour:
   _startPointTrm: {fileID: 406083159}
   _endPointTrm: {fileID: 1400436480}
   _currentPositionX: 0
-  _rollbackTime: 3
+  _rollbackTime: 1
 --- !u!1 &386677058
 GameObject:
   m_ObjectHideFlags: 0
