@@ -1,60 +1,104 @@
+using System;
+using System.Collections;
+using DG.Tweening;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using Update = UnityEngine.PlayerLoop.Update;
 
 namespace Seonho._01.Scripts.LineRenderer
 {
     public class HeartRate : MonoBehaviour
     {
-        [SerializeField] private Transform _centerTrm;
-        [SerializeField] private UnityEngine.LineRenderer _lineRenderer;
+        public UnityEngine.LineRenderer lineRenderer;
 
-        [SerializeField] private int _currentLineCount;
+        [SerializeField] private Transform _endPointTrm;
+
+        [SerializeField] private int _currentDoingLine;
+
         [SerializeField] private float _currentPositionX;
+        [SerializeField] private float _goingTime;
+        [SerializeField] private float _rollbackTime;
+
+        public bool end { get; private set; }
 
         private void Awake()
         {
-            _lineRenderer = GetComponent<UnityEngine.LineRenderer>();
-            
-            InitializeLineRenderer();
-                
-            ChangeLine(-1, 5, 3);
-            ChangeLine(-0.5f, 6, 3);
-            ChangeLine(-1f, 5, 4);
-            ChangeLine(-1.5f, 7, 2);
+            Initialize();
         }
 
-        void InitializeLineRenderer()
+        void Initialize()
         {
-            _lineRenderer.useWorldSpace = true;
+            lineRenderer = GetComponent<UnityEngine.LineRenderer>();
 
-            _currentPositionX = _centerTrm.position.x;
-            
-            AddLinePositionCount(2);
-            _lineRenderer.SetPosition(0, transform.position);
-            _lineRenderer.SetPosition(1, new Vector3(_currentPositionX, 0, 0));
+            lineRenderer.useWorldSpace = true;
         }
 
-        private void Update()
+        public void InitializeLineRenderer(int count)
         {
-            
+            lineRenderer.positionCount = 0;
+
+            AddLinePositionCount(count);
+
+            float distance = Mathf.Abs(_endPointTrm.position.x - transform.position.x) /
+                             (lineRenderer.positionCount - 1); // (최대 길이) / (꼭짓점 개수)
+
+            _currentPositionX = transform.position.x;
+
+            lineRenderer.SetPosition(0, new Vector3(_currentPositionX, 0, 0));
+
+            for (int i = 1; i < lineRenderer.positionCount; i++)
+            {
+                _currentPositionX += distance;
+                lineRenderer.SetPosition(i, new Vector3(_currentPositionX, 0, 0));
+            }
         }
 
         void AddLinePositionCount(int addCount)
         {
-            _currentLineCount += addCount;
-            _lineRenderer.positionCount += addCount;
+            lineRenderer.positionCount += addCount;
         }
 
-        void ChangeLine(float lowest, float highest, float distance)
+        public IEnumerator ComingLineLogic()
         {
-            AddLinePositionCount(4);
-            _currentPositionX += 0.5f;
-            _lineRenderer.SetPosition(_currentLineCount - 4, new Vector3(_currentPositionX, lowest, 0));
-            _currentPositionX += 0.5f;
-            _lineRenderer.SetPosition(_currentLineCount - 3, new Vector3(_currentPositionX, highest, 0));
-            _currentPositionX += 0.5f;
-            _lineRenderer.SetPosition(_currentLineCount - 2, new Vector3(_currentPositionX, _centerTrm.position.y, 0));
-            _currentPositionX += distance;
-            _lineRenderer.SetPosition(_currentLineCount - 1, new Vector3(_currentPositionX, _centerTrm.position.y, 0));
+            ComingLine(_currentDoingLine);
+            _currentDoingLine++;
+            yield return new WaitForSeconds(_goingTime);
+
+            if (_currentDoingLine < lineRenderer.positionCount - 1)
+                StartCoroutine(ComingLineLogic());
+            else
+            {
+                _currentDoingLine = 0;
+                end = true;
+            }
+        }
+        
+        void ComingLine(int index)
+        {
+            Vector3 currentPoint = lineRenderer.GetPosition(index);
+
+            DOTween.To(() => currentPoint.y, y =>
+                {
+                    currentPoint.y = y;
+                    lineRenderer.SetPosition(index, currentPoint);
+                }
+                , 0.1f
+                , _rollbackTime
+            ).OnComplete(() => DOTween.To(() => currentPoint.y, y =>
+                    {
+                        currentPoint.y = y;
+                        lineRenderer.SetPosition(index, currentPoint);
+                    }
+                    , 0
+                    , _rollbackTime
+                )
+            );
+        }
+
+        public void NotEnd()
+        {
+            end = false;
         }
     }
 }
